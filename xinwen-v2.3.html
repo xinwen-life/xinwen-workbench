@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f5f1ea">
+<title>心雯·生命成长</title>
+<style>
+  :root {
+    --ink: #2b2b2b;
+    --ink-soft: #5a5a5a;
+    --ink-light: #8a8a8a;
+    --paper: #f5f1ea;
+    --paper-warm: #ede7db;
+    --paper-deep: #e0d8c8;
+    --line: #d4cbb8;
+    --accent: #7a6a52;
+    --accent-soft: #a89878;
+    --heart: #a07878;
+    --body: #7a8a78;
+    --wealth: #b89858;
+    --shadow: 0 2px 12px rgba(60,50,30,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    font-family: "Songti SC", "STSong", "Noto Serif SC", "PingFang SC", serif;
+    color: var(--ink);
+    background: var(--paper);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 20% 10%, rgba(180,160,120,0.06), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(120,100,70,0.05), transparent 40%),
+      var(--paper);
+    padding-bottom: 80px;
+    min-height: 100vh;
+  }
+
+  /* 顶部栏 */
+  .topbar {
+    background: var(--paper-warm);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 16px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(8px);
+  }
+  .topbar .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .topbar .seal {
+    width: 32px; height: 32px;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-size: 18px;
+    line-height: 28px;
+    text-align: center;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .topbar .title {
+    font-size: 15px;
+    letter-spacing: 3px;
+    color: var(--ink);
+  }
+  .topbar .menu-btn {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    width: 36px; height: 32px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  /* 抽屉导航 */
+  .drawer-mask {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 99;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s;
+  }
+  .drawer-mask.show { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed;
+    top: 0; left: -260px;
+    width: 240px;
+    height: 100%;
+    background: var(--paper-warm);
+    z-index: 100;
+    transition: left .3s ease;
+    overflow-y: auto;
+    padding: 20px 0;
+  }
+  .drawer.show { left: 0; }
+  .drawer .brand-big {
+    text-align: center;
+    padding: 10px 20px 20px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 12px;
+  }
+  .drawer .seal-big {
+    width: 48px; height: 48px;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-size: 26px;
+    line-height: 44px;
+    text-align: center;
+    border-radius: 8px;
+    margin: 0 auto 10px;
+    font-weight: 600;
+  }
+  .drawer .name { font-size: 16px; letter-spacing: 4px; color: var(--ink); margin-bottom: 4px; }
+  .drawer .sub { font-size: 10px; letter-spacing: 2px; color: var(--ink-light); }
+
+  .nav-section {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--ink-light);
+    padding: 14px 20px 6px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-size: 14px;
+    letter-spacing: 2px;
+    transition: all .2s;
+    user-select: none;
+  }
+  .nav-item .ico {
+    font-size: 15px;
+    width: 20px;
+    text-align: center;
+    opacity: .7;
+  }
+  .nav-item.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .nav-item.active .ico { opacity: 1; }
+  .drawer-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--line);
+    margin-top: 16px;
+    font-size: 10px;
+    color: var(--ink-light);
+    line-height: 1.8;
+    letter-spacing: 1px;
+  }
+  .drawer-footer .creed { color: var(--accent); font-style: italic; margin-top: 6px; }
+
+  /* 主内容 */
+  .main { padding: 20px 16px; max-width: 640px; margin: 0 auto; }
+  .page { display: none; }
+  .page.active { display: block; animation: fade .4s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .page-head {
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .page-head h1 {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 5px;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .page-head .desc {
+    font-size: 12px;
+    color: var(--ink-light);
+    letter-spacing: 1px;
+    line-height: 1.7;
+  }
+
+  /* 卡片 */
+  .card {
+    background: rgba(255,253,247,0.7);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title::before {
+    content: "";
+    width: 3px; height: 13px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+  .card-title .copy-btn {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--ink-light);
+    cursor: pointer;
+    letter-spacing: 1px;
+    background: none;
+    border: 1px solid var(--line);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: inherit;
+  }
+  .card-title .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* 输入 */
+  textarea, input[type=text], input[type=password] {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.8;
+    resize: vertical;
+    outline: none;
+    transition: border-color .2s;
+    -webkit-appearance: none;
+  }
+  textarea:focus, input:focus { border-color: var(--accent); }
+  textarea { min-height: 110px; }
+  .input-label {
+    font-size: 11px;
+    color: var(--ink-light);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  /* 按钮 */
+  .btn {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 11px 22px;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 3px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn:active { transform: scale(0.97); background: var(--accent); }
+  .btn-soft {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .btn-soft:active { background: var(--accent); color: var(--paper); }
+  .btn-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+
+  /* 输出 */
+  .output {
+    background: var(--paper);
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    min-height: 50px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .output:empty::before {
+    content: "—— 输出将显示于此 ——";
+    color: var(--ink-light);
+    font-style: italic;
+    letter-spacing: 2px;
+  }
+  .output .label {
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-top: 12px;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .output .label:first-child { margin-top: 0; }
+  .output .quote {
+    color: var(--ink);
+    font-size: 15px;
+    padding: 6px 0 6px 12px;
+    border-left: 2px solid var(--accent-soft);
+    margin: 4px 0;
+  }
+
+  /* 标签 */
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .tag {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink-soft);
+    transition: all .2s;
+  }
+  .tag.active { color: var(--paper); border-color: transparent; }
+  .tag.heart.active { background: var(--heart); }
+  .tag.body.active { background: var(--body); }
+  .tag.wealth.active { background: var(--wealth); }
+
+  /* 素材库 */
+  .material-list { list-style: none; }
+  .material-item {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .material-item:last-child { border-bottom: none; }
+  .material-item .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 10px;
+    color: var(--ink-light);
+    letter-spacing: 1px;
+  }
+  .material-item .badge {
+    padding: 2px 9px;
+    border-radius: 10px;
+    font-size: 10px;
+    color: var(--paper);
+  }
+  .badge.heart { background: var(--heart); }
+  .badge.body { background: var(--body); }
+  .badge.wealth { background: var(--wealth); }
+  .material-item .content {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.8;
+    margin-bottom: 6px;
+    word-wrap: break-word;
+  }
+  .material-item .gold {
+    font-size: 12px;
+    color: var(--accent);
+    font-style: italic;
+    padding-left: 10px;
+    border-left: 2px solid var(--accent-soft);
+    word-wrap: break-word;
+  }
+  .material-item .del {
+    cursor: pointer;
+    color: var(--ink-light);
+    font-size: 11px;
+    margin-left: 8px;
+    padding: 4px 8px;
+  }
+  .material-item .del:active { color: var(--heart); }
+
+  .empty {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--ink-light);
+    font-style: italic;
+    letter-spacing: 2px;
+    font-size: 13px;
+  }
+
+  /* 风格锚点 */
+  .anchor-item {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .anchor-item .h {
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+  }
+  .anchor-item .b {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.8;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 16px; left: 50%;
+    transform: translateX(-50%) translateY(-12px);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: all .3s;
+    z-index: 200;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* 首页 */
+  .home-hero { text-align: center; padding: 20px 0 24px; }
+  .home-hero .seal-big {
+    width: 64px; height: 64px;
+    border: 3px solid var(--accent);
+    color: var(--accent);
+    font-size: 32px;
+    line-height: 58px;
+    text-align: center;
+    border-radius: 10px;
+    margin: 0 auto 16px;
+    font-weight: 600;
+  }
+  .home-hero h1 {
+    font-size: 22px;
+    letter-spacing: 8px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .home-hero .sub {
+    font-size: 11px;
+    color: var(--ink-light);
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+  }
+  .home-hero .creed-box {
+    background: var(--paper-warm);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 22px;
+    font-size: 13px;
+    line-height: 2.1;
+    color: var(--accent);
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+  .home-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .stat-card {
+    background: rgba(255,253,247,0.7);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 8px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-size: 24px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .stat-card .lbl {
+    font-size: 10px;
+    color: var(--ink-light);
+    letter-spacing: 2px;
+  }
+  .stat-card.heart .num { color: var(--heart); }
+  .stat-card.body .num { color: var(--body); }
+  .stat-card.wealth .num { color: var(--wealth); }
+
+  .loading {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border: 2px solid var(--accent-soft);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* 设置 */
+  .setting-note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    background: var(--paper-warm);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+  }
+  .setting-note a { color: var(--accent); }
+
+  /* 底部留白 */
+  .bottom-pad { height: 20px; }
+</style>
+</head>
+<body>
+
+<!-- 顶部栏 -->
+<header class="topbar">
+  <div class="brand">
+    <div class="seal">雯</div>
+    <div class="title">心雯·生命成长</div>
+  </div>
+  <button class="menu-btn" onclick="toggleDrawer()">☰</button>
+</header>
+
+<!-- 抽屉 -->
+<div class="drawer-mask" id="mask" onclick="toggleDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="brand-big">
+    <div class="seal-big">雯</div>
+    <div class="name">心雯</div>
+    <div class="sub">生命成长工作台</div>
+  </div>
+  <nav>
+    <div class="nav-item active" data-page="home"><span class="ico">◐</span>今日</div>
+    <div class="nav-section">日 课</div>
+    <div class="nav-item" data-page="diary"><span class="ico">✎</span>灵感日记</div>
+    <div class="nav-item" data-page="decode"><span class="ico">⌖</span>爆款拆解</div>
+    <div class="nav-item" data-page="polish"><span class="ico">✦</span>文案打磨</div>
+    <div class="nav-section">积 累</div>
+    <div class="nav-item" data-page="library"><span class="ico">☰</span>素材库</div>
+    <div class="nav-section">节 律</div>
+    <div class="nav-item" data-page="weekly"><span class="ico">☉</span>周规划</div>
+    <div class="nav-item" data-page="monthly"><span class="ico">○</span>月复盘</div>
+    <div class="nav-section">根 基</div>
+    <div class="nav-item" data-page="anchor"><span class="ico">⚓</span>风格锚点</div>
+    <div class="nav-item" data-page="settings"><span class="ico">⚙</span>设置</div>
+  </nav>
+  <div class="drawer-footer">
+    重新养育自己·福禄寿<br>
+    <span class="creed">慌了之后，还能站住。</span>
+  </div>
+</aside>
+
+<!-- 主内容 -->
+<main class="main">
+
+  <!-- 首页 -->
+  <section class="page active" id="page-home">
+    <div class="home-hero">
+      <div class="seal-big">雯</div>
+      <h1>心雯·生命成长</h1>
+      <div class="sub">影子搭档 · 随时待命</div>
+      <div class="creed-box">
+        替你看见你没说出口的疼，<br>
+        把复杂揉碎了说给你听，<br>
+        陪你补上那一堂没人上过的课，<br>
+        直到你长出那种——<br>
+        不是不慌，而是慌了之后还能站住的稳。
+      </div>
+    </div>
+    <div class="home-stats">
+      <div class="stat-card heart"><div class="num" id="stat-heart">0</div><div class="lbl">养心</div></div>
+      <div class="stat-card body"><div class="num" id="stat-body">0</div><div class="lbl">养身</div></div>
+      <div class="stat-card wealth"><div class="num" id="stat-wealth">0</div><div class="lbl">养财</div></div>
+    </div>
+    <div class="card" style="margin-top:18px;">
+      <div class="card-title">今日提醒</div>
+      <div id="today-hint" style="font-size:13px;line-height:1.9;color:var(--ink-soft);"></div>
+    </div>
+    <div class="card" id="key-hint-card" style="display:none;border-color:var(--heart);">
+      <div class="card-title" style="color:var(--heart);">⚠ 尚未配置AI</div>
+      <div style="font-size:13px;color:var(--ink-soft);line-height:1.8;">
+        当前为离线模式。要启用真实AI提炼/拆解/打磨，请到「设置」填入DeepSeek API Key。
+      </div>
+    </div>
+  </section>
+
+  <!-- 灵感日记 -->
+  <section class="page" id="page-diary">
+    <div class="page-head">
+      <h1>灵 感 日 记</h1>
+      <div class="desc">把今天的心得、感悟、人间片段扔进来。提炼金句、归入三篇体系、再问一个能挖更深的问题。</div>
+    </div>
+    <div class="card">
+      <label class="input-label">今日心得</label>
+      <textarea id="diary-input" placeholder="比如：今天在地铁上看见一个女生默默擦眼泪，手机屏幕亮着，是一条没发出去的消息……"></textarea>
+      <div style="margin-top:12px;">
+        <label class="input-label">归入哪一篇</label>
+        <div class="tags" id="diary-tags">
+          <span class="tag active" data-cat="auto">自动判断</span>
+          <span class="tag heart" data-cat="heart">养心</span>
+          <span class="tag body" data-cat="body">养身</span>
+          <span class="tag wealth" data-cat="wealth">养财</span>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="runDiarySafe()">提炼·归档·追问</button>
+        <button class="btn-soft btn" onclick="saveDiaryOnly()">仅存档</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">心雯的回应<button class="copy-btn" onclick="copyOutput('diary-output')">复制</button></div>
+      <div class="output" id="diary-output"></div>
+    </div>
+  </section>
+
+  <!-- 爆款拆解 -->
+  <section class="page" id="page-decode">
+    <div class="page-head">
+      <h1>爆 款 拆 解</h1>
+      <div class="desc">粘贴爆款文案、链接或截图描述。从五个维度拆：标题公式 / 情绪钩子 / 内容骨架 / 流量密码 / 你的版本。</div>
+    </div>
+    <div class="card">
+      <label class="input-label">爆款内容</label>
+      <textarea id="decode-input" placeholder="把文案贴进来，或描述这条爆款讲了什么、标题是什么、开头三秒是什么画面……"></textarea>
+      <div class="btn-row">
+        <button class="btn" onclick="runDecodeSafe()">五维拆解</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">拆解结果<button class="copy-btn" onclick="copyOutput('decode-output')">复制</button></div>
+      <div class="output" id="decode-output"></div>
+    </div>
+  </section>
+
+  <!-- 文案打磨 -->
+  <section class="page" id="page-polish">
+    <div class="page-head">
+      <h1>文 案 打 磨</h1>
+      <div class="desc">贴你写好的文案。出封面标题×3-5、钩人开头、评论区引导、标签建议。</div>
+    </div>
+    <div class="card">
+      <label class="input-label">你的文案</label>
+      <textarea id="polish-input" placeholder="把写好的文案贴这里……"></textarea>
+      <div class="btn-row">
+        <button class="btn" onclick="runPolishSafe()">磨刀</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">打磨结果<button class="copy-btn" onclick="copyOutput('polish-output')">复制</button></div>
+      <div class="output" id="polish-output"></div>
+    </div>
+  </section>
+
+  <!-- 素材库 -->
+  <section class="page" id="page-library">
+    <div class="page-head">
+      <h1>素 材 库</h1>
+      <div class="desc">所有灵感日记自动归档于此。按三篇体系分类。</div>
+    </div>
+    <div class="card">
+      <div class="tags" id="lib-filter">
+        <span class="tag active" data-filter="all">全部</span>
+        <span class="tag heart" data-filter="heart">养心</span>
+        <span class="tag body" data-filter="body">养身</span>
+        <span class="tag wealth" data-filter="wealth">养财</span>
+      </div>
+      <div class="btn-row" style="margin-top:12px;">
+        <button class="btn-soft btn" onclick="exportLibrary()">导出</button>
+        <button class="btn-soft btn" onclick="clearLibrary()">清空</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">条目</div>
+      <ul class="material-list" id="lib-list"></ul>
+    </div>
+  </section>
+
+  <!-- 周规划 -->
+  <section class="page" id="page-weekly">
+    <div class="page-head">
+      <h1>周 度 规 划</h1>
+      <div class="desc">每周日执行。基于本周素材库，规划下周3-5条选题。</div>
+    </div>
+    <div class="card">
+      <label class="input-label">补充要求（可选）</label>
+      <input type="text" id="weekly-input" placeholder="比如：这周想多养身篇，或者想试试视频号……">
+      <div class="btn-row">
+        <button class="btn" onclick="runWeeklySafe()">生成下周选题</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">下周选题<button class="copy-btn" onclick="copyOutput('weekly-output')">复制</button></div>
+      <div class="output" id="weekly-output"></div>
+    </div>
+  </section>
+
+  <!-- 月复盘 -->
+  <section class="page" id="page-monthly">
+    <div class="page-head">
+      <h1>月 度 复 盘</h1>
+      <div class="desc">每月1日执行。复盘上月表现，给出下月发力方向。</div>
+    </div>
+    <div class="card">
+      <label class="input-label">上月数据简述（可选）</label>
+      <textarea id="monthly-input" placeholder="把上月大致情况说几句，我结合素材库一起复盘……"></textarea>
+      <div class="btn-row">
+        <button class="btn" onclick="runMonthlySafe()">生成本月复盘</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">复盘报告<button class="copy-btn" onclick="copyOutput('monthly-output')">复制</button></div>
+      <div class="output" id="monthly-output"></div>
+    </div>
+  </section>
+
+  <!-- 风格锚点 -->
+  <section class="page" id="page-anchor">
+    <div class="page-head">
+      <h1>风 格 锚 点</h1>
+      <div class="desc">每次输出自动校准。这是心雯的根，不可移。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">五根</div>
+      <div class="anchor-item">
+        <div class="h">语言质感</div>
+        <div class="b">松、静、留白、如水淌过。不说教，不鸡汤，不大道理。像深夜灯下有人在轻声说话。</div>
+      </div>
+      <div class="anchor-item">
+        <div class="h">标题风格</div>
+        <div class="b">模仿林林水水（世间法）——极简、对仗、禅意、像一句没说完的叹息。四字八字为主。</div>
+      </div>
+      <div class="anchor-item">
+        <div class="h">内容节奏</div>
+        <div class="b">短句。多分段。留白多。故事先行，观点在后。先共鸣，后出口。</div>
+      </div>
+      <div class="anchor-item">
+        <div class="h">核心立场</div>
+        <div class="b">不制造焦虑，不审判读者，不承诺速效。始终传递——"你没问题，你只是缺了一课。现在补，来得及。"</div>
+      </div>
+      <div class="anchor-item">
+        <div class="h">体系归属</div>
+        <div class="b">归入《重新养育自己·福禄寿》——养心篇·心无挂碍 / 养身篇·身无病苦 / 养财篇·财无匮乏。</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">心法口诀</div>
+      <div style="font-size:14px;line-height:2.3;color:var(--accent);font-style:italic;letter-spacing:1px;padding:4px 0;">
+        替你看见你没说出口的疼，<br>
+        把复杂揉碎了说给你听，<br>
+        陪你补上那一堂没人上过的课，<br>
+        直到你长出那种——<br>
+        不是不慌，而是慌了之后还能站住的稳。
+      </div>
+    </div>
+  </section>
+
+  <!-- 设置 -->
+  <section class="page" id="page-settings">
+    <div class="page-head">
+      <h1>设 置</h1>
+      <div class="desc">配置AI接口后，所有功能启用真实大模型。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">DeepSeek API</div>
+      <div class="setting-note">
+        <b>如何获取Key：</b><br>
+        1. 访问 <a href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a> 注册登录<br>
+        2. 进入「API Keys」页面，点「创建 API Key」<br>
+        3. 复制生成的 Key（形如 sk-xxx），粘贴到下方<br>
+        4. Key只存在你手机本地，不上传任何服务器<br>
+        <br>
+        <b>费用：</b>DeepSeek新用户有免费额度，日常用每月不到1元
+      </div>
+      <label class="input-label">API Key</label>
+      <input type="password" id="api-key" placeholder="sk-xxxxxxxxxxxxxxxx" autocomplete="off">
+      <label class="input-label" style="margin-top:12px;">模型（默认 deepseek-chat）</label>
+      <input type="text" id="api-model" placeholder="deepseek-chat">
+      <div class="btn-row">
+        <button class="btn" onclick="saveKey()">保存</button>
+        <button class="btn-soft btn" onclick="testKey()">测试连接</button>
+        <button class="btn-soft btn" onclick="clearKey()">清除</button>
+      </div>
+      <div id="key-status" style="margin-top:14px;font-size:12px;color:var(--ink-light);"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">添加到桌面</div>
+      <div class="setting-note">
+        想让工作台像App一样在桌面有图标：<br>
+        <b>Chrome浏览器：</b>菜单 ⋮ →「添加到主屏幕」<br>
+        <b>自带浏览器：</b>菜单 →「添加到主屏幕」/「添加快捷方式」<br>
+        <br>
+        之后桌面会出现「心雯·生命成长」图标，点开即用，无需再输网址。
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">数据备份</div>
+      <div class="setting-note">
+        素材库存于手机本地。换手机或清缓存会丢失，请定期到「素材库 → 导出」保存文本备份。
+      </div>
+    </div>
+  </section>
+
+  <div class="bottom-pad"></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== 数据层 ===== */
+const LIB_KEY = 'xinwen_library_v1';
+const KEY_STORE = 'xinwen_api_key_v1';
+const MODEL_STORE = 'xinwen_api_model_v1';
+function loadLib(){ try { return JSON.parse(localStorage.getItem(LIB_KEY)) || []; } catch(e){ return []; } }
+function saveLib(a){ localStorage.setItem(LIB_KEY, JSON.stringify(a)); }
+let library = loadLib();
+let currentFilter = 'all';
+let diaryCat = 'auto';
+
+/* ===== 导航 ===== */
+function toggleDrawer(){
+  document.getElementById('drawer').classList.toggle('show');
+  document.getElementById('mask').classList.toggle('show');
+}
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.onclick = () => {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + item.dataset.page).classList.add('active');
+    toggleDrawer();
+    if (item.dataset.page === 'library') renderLibrary();
+    if (item.dataset.page === 'home') renderHome();
+    if (item.dataset.page === 'settings') loadKeyUI();
+    window.scrollTo(0, 0);
+  };
+});
+
+document.querySelectorAll('#diary-tags .tag').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('#diary-tags .tag').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    diaryCat = t.dataset.cat;
+  };
+});
+document.querySelectorAll('#lib-filter .tag').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('#lib-filter .tag').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    currentFilter = t.dataset.filter;
+    renderLibrary();
+  };
+});
+
+/* ===== Toast ===== */
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+function copyOutput(id){
+  const el = document.getElementById(id);
+  const text = el.innerText;
+  if (!text || text.includes('输出将显示于此')) { toast('暂无内容可复制'); return; }
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => toast('已复制'));
+  } else {
+    const r = document.createRange();
+    r.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(r);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+    toast('已复制');
+  }
+}
+
+/* ===== 风格锚点 ===== */
+const STYLE_ANCHOR = `【风格锚点·心雯】
+- 语言质感：松、静、留白、如水淌过。不说教，不鸡汤，不大道理。像深夜灯下有人在轻声说话。
+- 标题风格：模仿林林水水（世间法）——极简、对仗、禅意、像一句没说完的叹息。四字八字为主。
+- 内容节奏：短句。多分段。留白多。故事先行，观点在后。先共鸣，后出口。
+- 核心立场：不制造焦虑，不审判读者，不承诺速效。始终传递——"你没问题，你只是缺了一课。现在补，来得及。"
+- 体系归属：归入《重新养育自己·福禄寿》——养心篇·心无挂碍 / 养身篇·身无病苦 / 养财篇·财无匮乏。`;
+
+const CAT_NAME = { heart: '养心·心无挂碍', body: '养身·身无病苦', wealth: '养财·财无匮乏' };
+function autoCat(text){
+  const t = text.toLowerCase();
+  if (/(钱|财|穷|富|赚|花|买|物|价|工|薪|业|事业|工作|消费)/.test(t)) return 'wealth';
+  if (/(身|体|病|痛|睡|食|动|累|疲|倦|呼吸|经络|气血|养生)/.test(t)) return 'body';
+  return 'heart';
+}
+
+/* ===== AI 调用（DeepSeek）===== */
+function getKey(){ return localStorage.getItem(KEY_STORE) || ''; }
+function getModel(){ return localStorage.getItem(MODEL_STORE) || 'deepseek-chat'; }
+
+async function callAI(prompt){
+  const key = getKey();
+  if (!key) return mockAI(prompt);
+  const res = await fetch('https://api.deepseek.com/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + key,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: getModel(),
+      messages: [
+        { role: 'system', content: '你是心雯的AI工作伙伴，服务于身心疗愈自媒体账号「心雯·生命成长」。严格按用户给出的风格锚点和输出格式回应。输出可直接用HTML标签（div class=label, div class=quote）排版。' },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.85,
+      max_tokens: 2200,
+      stream: false
+    })
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error('DeepSeek接口异常 (' + res.status + ')：' + err.slice(0,200));
+  }
+  const data = await res.json();
+  return data.choices[0].message.content;
+}
+
+function mockAI(prompt){
+  if (prompt.includes('提炼金句') && prompt.includes('延伸提问')) {
+    return `<div class="label">⚠️ 离线模式</div>当前未配置API Key，显示的是占位示例。配置后即为真实AI回应。
+<div class="label">提炼金句</div>
+<div class="quote">人间的疼，多半是没说出口的那句。</div>
+<div class="quote">看见，已是温柔。</div>
+<div class="label">归类：养心·心无挂碍</div>
+这条心得讲的是「看见他人的未言之处」，落在心念的安放，归养心篇。
+<div class="label">延伸提问</div>
+你看见她的时候，是自己哪一处也被轻轻触了一下？`;
+  }
+  if (prompt.includes('标题公式') && prompt.includes('我的版本')) {
+    return `<div class="label">⚠️ 离线模式（占位示例）</div>
+<div class="label">标题公式</div>反常识断言 + 身份标签
+<div class="label">情绪钩子</div>前三秒用一个反常画面+一句刺痛的提问钩住观众
+<div class="label">内容骨架</div>故事→观点→出口
+<div class="label">流量密码</div>共鸣点准 + 身份标签清晰
+<div class="label">我的版本</div>标题：你只是缺一课`;
+  }
+  if (prompt.includes('封面标题') && prompt.includes('评论区引导')) {
+    return `<div class="label">⚠️ 离线模式（占位示例）</div>
+<div class="label">封面标题</div>★ 你没问题，你只是缺一课
+<div class="label">钩人开头</div>那一年，没人告诉你，哭是可以的。
+<div class="label">评论区置顶引导</div>你有没有哪一刻，觉得"要是我早知道就好了"？
+<div class="label">标签建议</div>#身心疗愈 #重新养育自己 #林林水水`;
+  }
+  if (prompt.includes('规划下周')) {
+    return `<div class="label">⚠️ 离线模式（占位示例）</div>
+<div class="label">下周选题</div>
+1.【养心】看见，即是药 / 平台：小红书
+2.【养身】先睡，再想 / 平台：抖音
+3.【养财】你花的，不是钱 / 平台：小红书`;
+  }
+  if (prompt.includes('复盘上月')) {
+    return `<div class="label">⚠️ 离线模式（占位示例）</div>
+<div class="label">月度复盘</div>
+一、互动高低：养心篇高，养财篇低
+二、评论区痛点：没人理解我 / 总是差一步
+三、风格进步：留白感渐出，少了说教
+四、下月方向：养财篇用故事化重讲`;
+  }
+  return '已收到。当前为离线模式，配置API Key后启用真实AI。';
+}
+
+function setLoading(id, loading){
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (loading) {
+    el.dataset.ph = el.innerHTML;
+    el.innerHTML = '<span class="loading"></span>心雯正在听……';
+  } else {
+    // 不再恢复原始内容，让AI结果自然显示
+    delete el.dataset.ph;
+  }
+}
+
+/* ===== 灵感日记 ===== */
+async function runDiarySafe(){
+  try { toast('正在听…'); await runDiary(); }
+  catch(e){ document.getElementById('diary-output').innerHTML='❌ 出错了：'+e.message+'<br><br>请截图发我'; }
+}
+async function runDiary(){
+  const input = document.getElementById('diary-input').value.trim();
+  if (!input) { toast('先写点什么吧'); return; }
+  setLoading('diary-output', true);
+  try {
+    const cat = diaryCat === 'auto' ? autoCat(input) : diaryCat;
+    const prompt = `${STYLE_ANCHOR}
+
+【任务】心雯发来今天的灵感日记，请帮她做三件事：
+
+1. 提炼金句：从中提取1-2句可作封面标题或核心观点的句子。风格——四字八字对仗、禅意、留白、像林林水水（世间法）。
+2. 归类存档：把这条心得归入三篇体系之一（已判断为：${CAT_NAME[cat]}），简要说明为什么归这一篇。
+3. 延伸提问：针对这条心得，问心雯一个能挖得更深的问题，帮她找到还没说透的角度。
+
+【输出格式】
+<div class="label">提炼金句</div>
+<div class="quote">金句1</div>
+<div class="quote">金句2（若有）</div>
+<div class="label">归类：${CAT_NAME[cat]}</div>
+简短说明归因（一两句）
+<div class="label">延伸提问</div>
+一个能挖更深的问题
+
+【心雯的灵感日记】
+${input}`;
+    const text = await callAI(prompt);
+    document.getElementById('diary-output').innerHTML = text;
+    library.unshift({
+      id: Date.now(),
+      content: input,
+      cat,
+      gold: extractGold(text),
+      time: new Date().toLocaleString('zh-CN', { hour12: false })
+    });
+    saveLib(library);
+    renderHome();
+    toast('已归档至素材库');
+  } catch(e) {
+    document.getElementById('diary-output').innerHTML = '出错了：' + e.message + '<br><br>可先点"仅存档"保存原文。';
+  } finally {
+    setLoading('diary-output', false);
+  }
+}
+function extractGold(html){
+  const m = html.match(/<div class="quote">([\s\S]*?)<\/div>/);
+  return m ? m[1].trim() : '';
+}
+function saveDiaryOnly(){
+  const input = document.getElementById('diary-input').value.trim();
+  if (!input) { toast('先写点什么吧'); return; }
+  const cat = diaryCat === 'auto' ? autoCat(input) : diaryCat;
+  library.unshift({
+    id: Date.now(),
+    content: input,
+    cat,
+    gold: '',
+    time: new Date().toLocaleString('zh-CN', { hour12: false })
+  });
+  saveLib(library);
+  document.getElementById('diary-input').value = '';
+  renderHome();
+  toast('已存档，未提炼');
+}
+
+/* ===== 爆款拆解 ===== */
+async function runDecodeSafe(){
+  try { toast('正在拆…'); await runDecode(); }
+  catch(e){ document.getElementById('decode-output').innerHTML='❌ 出错了：'+e.message+'<br><br>请截图发我'; }
+}
+async function runDecode(){
+  const inputEl = document.getElementById('decode-input');
+  if (!inputEl) { toast('找不到输入框'); return; }
+  const input = inputEl.value.trim();
+  if (!input) { toast('先贴点内容吧'); return; }
+  const outEl = document.getElementById('decode-output');
+  if (!outEl) { toast('找不到输出区'); return; }
+  outEl.innerHTML = '<span class="loading"></span>正在拆解…';
+  try {
+    const prompt = `${STYLE_ANCHOR}
+
+【任务】心雯发来一条爆款内容，请从五个维度拆解：
+
+1. 标题公式：标题用了什么结构？四字八字、疑问句、还是反常识断言？
+2. 情绪钩子：前三秒用什么画面或句子钩住观众？
+3. 内容骨架：抽出文案骨架——讲了什么故事、抛了什么观点、最后给了什么出口？
+4. 流量密码：这条为什么能火？共鸣点准、身份标签清晰、还是评论区互动设计得好？
+5. 我的版本：如果用我的体系（重新养育自己·福禄寿）重新讲这个主题，可以怎么讲？给一个标题和三个分段小标题。
+
+【输出格式】
+<div class="label">标题公式</div>
+...
+<div class="label">情绪钩子</div>
+...
+<div class="label">内容骨架</div>
+...
+<div class="label">流量密码</div>
+...
+<div class="label">我的版本</div>
+标题：xxx
+- 分段一：xxx
+- 分段二：xxx
+- 分段三：xxx
+
+【爆款内容】
+${input}`;
+    const text = await callAI(prompt);
+    outEl.innerHTML = text;
+  } catch(e) {
+    outEl.innerHTML = '❌ 出错了：' + e.message + '<br><br>请截图发我';
+  }
+}
+
+/* ===== 文案打磨 ===== */
+async function runPolishSafe(){
+  try { toast('正在磨刀…'); await runPolish(); }
+  catch(e){ document.getElementById('polish-output').innerHTML='❌ 出错了：'+e.message+'<br><br>请截图发我'; }
+}
+async function runPolish(){
+  const inputEl = document.getElementById('polish-input');
+  if (!inputEl) { toast('找不到文案输入框'); return; }
+  const input = inputEl.value.trim();
+  if (!input) { toast('先贴文案吧'); return; }
+  const outEl = document.getElementById('polish-output');
+  if (!outEl) { toast('找不到输出区'); return; }
+  outEl.innerHTML = '<span class="loading"></span>心雯正在听……';
+  try {
+    const prompt = `${STYLE_ANCHOR}
+
+【任务】心雯发来她写好的文案，请帮她做四件事：
+
+1. 封面标题：按林林水水的风格，给3-5个备选，标注首选推荐（用★标）。
+2. 优化开头：把前三秒改得更钩人——可以是一句话故事、一个反常提问、或一个安静但刺痛的画面。给2-3个版本。
+3. 评论区引导：设计一条评论区置顶引导语，鼓励观众说出自己的故事，提高互动率。
+4. 标签建议：给3-5个抖音/小红书关键词标签。
+
+【输出格式】
+<div class="label">封面标题</div>
+★ 首选：xxx
+- 备选1
+- 备选2
+- 备选3
+<div class="label">钩人开头</div>
+版本一：xxx
+版本二：xxx
+<div class="label">评论区置顶引导</div>
+xxx
+<div class="label">标签建议</div>
+#xxx #xxx #xxx
+
+【心雯的文案】
+${input}`;
+    const text = await callAI(prompt);
+    outEl.innerHTML = text;
+  } catch(e) {
+    outEl.innerHTML = '❌ 出错了：' + e.message + '<br><br>请把这段截图发我，我帮你修。';
+  }
+}
+
+/* ===== 周规划 ===== */
+async function runWeeklySafe(){
+  try { toast('正在排…'); await runWeekly(); }
+  catch(e){ document.getElementById('weekly-output').innerHTML='❌ 出错了：'+e.message+'<br><br>请截图发我'; }
+}
+async function runWeekly(){
+  const extra = document.getElementById('weekly-input').value.trim();
+  setLoading('weekly-output', true);
+  try {
+    const libSummary = library.slice(0, 20).map((m,i) => `[${i+1}] ${CAT_NAME[m.cat]}：${m.content.slice(0,80)}`).join('\n');
+    const prompt = `${STYLE_ANCHOR}
+
+【任务】今天是周日，请帮心雯规划下周3-5条内容选题。
+
+基于本周素材库，结合补充要求，每条选题标注：
+- 所属体系（心无挂碍 / 身无病苦 / 财无匮乏）
+- 封面标题（林林水水风格，四字八字为主）
+- 一句话核心观点
+- 适合平台（抖音 / 小红书 / 视频号）
+
+【本周素材库】
+${libSummary || '（本周暂无素材，请基于心雯的体系自由发挥）'}
+
+【补充要求】
+${extra || '无'}`;
+    const text = await callAI(prompt);
+    document.getElementById('weekly-output').innerHTML = text;
+  } catch(e) {
+    document.getElementById('weekly-output').innerHTML = '出错了：' + e.message;
+  } finally {
+    setLoading('weekly-output', false);
+  }
+}
+
+/* ===== 月复盘 ===== */
+async function runMonthlySafe(){
+  try { toast('正在复盘…'); await runMonthly(); }
+  catch(e){ document.getElementById('monthly-output').innerHTML='❌ 出错了：'+e.message+'<br><br>请截图发我'; }
+}
+async function runMonthly(){
+  const input = document.getElementById('monthly-input').value.trim();
+  setLoading('monthly-output', true);
+  try {
+    const libSummary = library.slice(0, 30).map((m,i) => `[${i+1}] ${CAT_NAME[m.cat]}：${(m.gold || m.content).slice(0,60)}`).join('\n');
+    const prompt = `${STYLE_ANCHOR}
+
+【任务】今天是每月1日，请帮心雯复盘上个月账号表现，并给出下月发力方向。
+
+复盘维度：
+1. 哪些主题互动高、哪些低
+2. 评论区高频出现的关键词和痛点
+3. 语言风格和表达方式的进步、还需要打磨的地方
+4. 下个月的发力方向建议
+
+【上月数据简述】
+${input || '（心雯未提供具体数据，请基于素材库推测并提示她下次提供数据）'}
+
+【上月素材库】
+${libSummary || '（上月暂无素材）'}`;
+    const text = await callAI(prompt);
+    document.getElementById('monthly-output').innerHTML = text;
+  } catch(e) {
+    document.getElementById('monthly-output').innerHTML = '出错了：' + e.message;
+  } finally {
+    setLoading('monthly-output', false);
+  }
+}
+
+/* ===== 素材库 ===== */
+function renderLibrary(){
+  const list = document.getElementById('lib-list');
+  const items = currentFilter === 'all' ? library : library.filter(m => m.cat === currentFilter);
+  if (!items.length) {
+    list.innerHTML = '<div class="empty">—— 空山新雨，尚无落笔 ——</div>';
+    return;
+  }
+  list.innerHTML = items.map(m => `
+    <li class="material-item">
+      <div class="meta">
+        <span><span class="badge ${m.cat}">${CAT_NAME[m.cat]}</span> · ${m.time}</span>
+        <span><span class="del" onclick="delItem(${m.id})">删</span></span>
+      </div>
+      <div class="content">${escapeHtml(m.content)}</div>
+      ${m.gold ? `<div class="gold">${escapeHtml(m.gold)}</div>` : ''}
+    </li>
+  `).join('');
+}
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function delItem(id){
+  library = library.filter(m => m.id !== id);
+  saveLib(library);
+  renderLibrary();
+  renderHome();
+  toast('已删除');
+}
+function exportLibrary(){
+  if (!library.length) { toast('素材库为空'); return; }
+  let text = `心雯·生命成长 素材库导出\n导出时间：${new Date().toLocaleString('zh-CN',{hour12:false})}\n共 ${library.length} 条\n\n==============================\n\n`;
+  library.forEach((m,i) => {
+    text += `[${i+1}] ${CAT_NAME[m.cat]} | ${m.time}\n原文：${m.content}\n`;
+    if (m.gold) text += `金句：${m.gold}\n`;
+    text += '\n------------------------------\n\n';
+  });
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `心雯素材库_${new Date().toISOString().slice(0,10)}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  toast('已导出');
+}
+function clearLibrary(){
+  if (!library.length) { toast('素材库本就空'); return; }
+  if (confirm('确定清空全部素材？此操作不可撤销。')) {
+    library = [];
+    saveLib(library);
+    renderLibrary();
+    renderHome();
+    toast('已清空');
+  }
+}
+
+/* ===== 设置 ===== */
+function loadKeyUI(){
+  const k = getKey();
+  const m = getModel();
+  document.getElementById('api-key').value = k;
+  document.getElementById('api-model').value = m;
+  document.getElementById('key-status').innerHTML = k
+    ? '<span style="color:var(--body);">● 已配置Key（模型：' + m + '）</span>'
+    : '<span style="color:var(--heart);">● 未配置，当前离线模式</span>';
+}
+function saveKey(){
+  const k = document.getElementById('api-key').value.trim();
+  const m = document.getElementById('api-model').value.trim() || 'deepseek-chat';
+  if (k) {
+    localStorage.setItem(KEY_STORE, k);
+    localStorage.setItem(MODEL_STORE, m);
+    toast('已保存');
+  } else {
+    toast('请填入Key');
+  }
+  loadKeyUI();
+  renderHome();
+}
+function clearKey(){
+  localStorage.removeItem(KEY_STORE);
+  localStorage.removeItem(MODEL_STORE);
+  document.getElementById('api-key').value = '';
+  document.getElementById('api-model').value = '';
+  toast('已清除');
+  loadKeyUI();
+  renderHome();
+}
+async function testKey(){
+  const k = document.getElementById('api-key').value.trim();
+  if (!k) { toast('先填Key'); return; }
+  const status = document.getElementById('key-status');
+  status.innerHTML = '<span class="loading"></span>测试中……';
+  try {
+    const res = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + k, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: document.getElementById('api-model').value.trim() || 'deepseek-chat',
+        messages: [{ role: 'user', content: '你好' }],
+        max_tokens: 10
+      })
+    });
+    if (res.ok) {
+      status.innerHTML = '<span style="color:var(--body);">● 连接成功，可以使用</span>';
+      toast('连接成功');
+    } else {
+      const err = await res.text();
+      status.innerHTML = '<span style="color:var(--heart);">● 失败：' + res.status + ' ' + err.slice(0,100) + '</span>';
+    }
+  } catch(e) {
+    status.innerHTML = '<span style="color:var(--heart);">● 网络错误：' + e.message + '</span>';
+  }
+}
+
+/* ===== 首页 ===== */
+function renderHome(){
+  const heart = library.filter(m => m.cat === 'heart').length;
+  const body = library.filter(m => m.cat === 'body').length;
+  const wealth = library.filter(m => m.cat === 'wealth').length;
+  document.getElementById('stat-heart').textContent = heart;
+  document.getElementById('stat-body').textContent = body;
+  document.getElementById('stat-wealth').textContent = wealth;
+
+  const hasKey = !!getKey();
+  document.getElementById('key-hint-card').style.display = hasKey ? 'none' : 'block';
+
+  const now = new Date();
+  const day = now.getDay();
+  const date = now.getDate();
+  let hint = '';
+  if (day === 0) hint = '今天是周日。<br>记得去「周规划」生成下周选题。';
+  else if (date === 1) hint = '今天是每月1号。<br>记得去「月复盘」复盘上月表现。';
+  else hint = '把今天的心得扔进「灵感日记」，日积月累，便是你的山。';
+  const hour = now.getHours();
+  let greet = hour < 6 ? '夜深了，心雯。' : hour < 11 ? '早上好，心雯。' : hour < 14 ? '午安，心雯。' : hour < 18 ? '下午好，心雯。' : hour < 22 ? '晚上好，心雯。' : '夜深了，心雯。';
+  document.getElementById('today-hint').innerHTML = greet + '<br>' + hint;
+}
+
+/* ===== 启动 ===== */
+renderHome();
+
+/* 版本号 v2.3 - 修复setLoading覆盖AI结果 */
+window.onerror = function(msg, url, line, col, err) {
+  toast('JS错误：' + msg + ' (行' + line + ')');
+  return false;
+};
+console.log('心雯工作台 v2.3 已加载');
+</script>
+
+</body>
+</html>
